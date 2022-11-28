@@ -196,13 +196,19 @@ namespace FP_Setul_2
         {
             Console.WriteLine("Introduceti numarul n");
             int n = int.Parse(Console.ReadLine());
-            int S = 0, P = 1;
+            int S = 0;
+            long P = 1;
+            bool nereprezentabil = false;
             for (int i = 1; i <= n; i++)
             {
                 S = S + i;
                 P = P * i;
+                if (P < 0) nereprezentabil = true;
             }
-            Console.WriteLine($"Suma numerelor de la 1 la {n} este {S} iar produsul lor este {P}");
+            
+            Console.WriteLine($"Suma numerelor de la 1 la {n} este {S}");
+            if (nereprezentabil) Console.WriteLine("Produsul nu este reprezentabil");
+            else Console.WriteLine($"Produsul numerelor de la in la {n} este {P}");
             Console.ReadKey();
         }
         /// <summary>
@@ -210,11 +216,11 @@ namespace FP_Setul_2
         /// </summary>
         private static void S4()
         {
-            Console.WriteLine("Introduceti secventa n ,numarul a si cele n numere ale secventei ");
+            Console.WriteLine("Introduceti nr de elemente ale secventei ,numarul a si cele n numere ale secventei ");
             int n = int.Parse(Console.ReadLine());
             int a = int.Parse(Console.ReadLine());
             int p = -1;
-            for (int i = 0; i <= n - 1; i++)
+            for (int i = 0; i <= n-1 ; i++)
             {
                 int k = int.Parse(Console.ReadLine());
                 if (k == a) p = i;
@@ -323,7 +329,7 @@ namespace FP_Setul_2
         {
             Console.WriteLine("Introduceti numarul n si cele n elemente ale seriei");
             int n = int.Parse(Console.ReadLine());
-            int b = 0, nr = 0;
+            int b = 0, nr = 0,nrmax=0;
             for (int i = 1; i <= n ; i++)
             {
                 int a = int.Parse(Console.ReadLine());
@@ -332,10 +338,13 @@ namespace FP_Setul_2
                 else
                 {
                     b = a;
+                    if(nr > nrmax) nrmax = nr;
                     nr = 1;
+                    
                 }
+                if(nr > nrmax) nrmax = nr;
             }
-            Console.WriteLine($"Numarul maxim de elemente egale consecutive ale sirului este {nr}");
+            Console.WriteLine($"Numarul maxim de elemente egale consecutive ale sirului este {nrmax}");
             Console.ReadKey();
         }
         /// <summary>
@@ -356,9 +365,6 @@ namespace FP_Setul_2
                 }
                 S = S + 1 / a;
             }
-            S = S * 100;
-            S = Math.Truncate(S);
-            S = S / 100;
             Console.WriteLine($"Suma inverselor este {S}");
             Console.ReadKey();
         }
@@ -371,21 +377,32 @@ namespace FP_Setul_2
         {
             Console.WriteLine("Introduceti numarul n si cele n elemente ale seriei");
             int n = int.Parse(Console.ReadLine());
-            int nr = 0, b=0;
-            bool consecutiv = true;
-            for (int i = 1; i <= n - 1; i++)
-            { 
-                int a = int.Parse(Console.ReadLine());
-                if (b == 0) b = a;
-                if (a != 0) if (a == b + 1) consecutiv = true;
+            int nr = 0, b = 0,a=0;
+            bool consecutiv = false;
+            for (int i = 0; i < n; i++)
+            {
+                 a = int.Parse(Console.ReadLine());
+                if (b == 0)
+                {
+                    b = a;
+                }
+                if (a != 0)
+                {
+                    if (a == b + 1 ) consecutiv = true;
                     else consecutiv = false;
-                else { if (consecutiv) nr++;
+                    b = a;
+                }
+                else
+                {
+                    if (consecutiv) nr++;
                     b = 0;
                 }
-                  
             }
-            Console.WriteLine($"Numarul maxim de grupuri de numere consecutive este {nr}");
-            Console.ReadKey();
+            if (consecutiv&&(a!=0)) nr++;
+            
+                Console.WriteLine($"Numarul maxim de grupuri de numere consecutive este {nr}");
+                Console.ReadKey();
+            
         }
         /// <summary>
         /// O <secventa crescatoare rotita> este o secventa de numere care este in ordine crescatoare sau poate fi transformata intr-o secventa in ordine crescatoare prin rotiri succesive 
@@ -394,21 +411,23 @@ namespace FP_Setul_2
         /// </summary>
         private static void S13()
         {
-            Console.WriteLine("Introduceti numarul n urmat de cele n elemnte ale seriei");
+            Console.WriteLine("Introduceti numarul n si cele n elemnte ale seriei");
             int n = int.Parse(Console.ReadLine());
             int b = 0, c = 0;
-            bool crescatoarerotita = true;
+            bool crescatoarerotita = true,dc=false,pas=false;
             for (int i = 1; i <= n; i++)
-            {
+            {   
                 int a = int.Parse(Console.ReadLine());
-                if (i >= 3)
-
-                    if ((b > c && b < a && c < a) || (b < c && b < a && c > a)) crescatoarerotita = false;
-                
-                b = c;
-                c = a;
-
-
+                if (i == 1) { c = a;
+                    b = a;
+                }
+                if(b>a) if(!pas) 
+                {
+                    dc = true;
+                }
+                if (dc && pas) { if (b > a || a > c) crescatoarerotita = false; }
+                else if(dc) pas = true;
+                b = a;
             }
             if (crescatoarerotita) Console.WriteLine("Seria este crescatoare rotita");
             else Console.WriteLine("Seria nu este crescatoare rotita");
@@ -419,22 +438,26 @@ namespace FP_Setul_2
         /// </summary>
         private static void S14()
         {
-            Console.WriteLine("Introduceti numarul n urmat de cele n elemnte ale seriei");
+            Console.WriteLine("Introduceti numarul n si cele n elemnte ale seriei");
             int n = int.Parse(Console.ReadLine());
             int b = 0, c = 0;
-            bool crescatoarerotita = true;
-            bool descrescatoarerotita = true;
+            bool crescatoarerotita = true, descrescatoarerotita = true, dc = false, cc = false, pasd = false, pasc = false; ;
+           
             for (int i = 1; i <= n; i++)
             {
                 int a = int.Parse(Console.ReadLine());
-                if (i >= 3)
-
-                    if ((b > c && b < a && c < a) || (b < c && b < a && c > a)) crescatoarerotita = false;
-                if ((b < c && c > a && b > a) || (b > c && c < a && b > a)) descrescatoarerotita = false;
-                b = c;
-                c = a;
-
-
+                if (i == 1)
+                {
+                    c = a;
+                    b = a;
+                }
+                if (b > a) if(!pasd) dc = true;
+                if (dc && pasd) { if (b > a || a > c) crescatoarerotita = false; }
+                else if (dc) pasd = true;
+                if(b<a) if(!pasc) cc = true;
+                if (cc && pasc) { if (b < a || a < c) descrescatoarerotita = false; }
+                else if (cc) pasc = true;  
+                b = a;
             }
             if (crescatoarerotita||descrescatoarerotita) Console.WriteLine("Seria este monotona rotita");
             else Console.WriteLine("Seria nu este monotona rotita");
@@ -449,32 +472,38 @@ namespace FP_Setul_2
         {
             Console.WriteLine("Introduceti numarul n si cele n numere ale seriei");
             int n = int.Parse(Console.ReadLine());
-            int b = -999999999, max = 0;
-            bool descrescatoare = false, bitonica = true;
-            for (int i = 1; i <= n; i++)
-            {
+            int b = 0, max = 0,i;
+            bool descrescatoare = false, bitonica = false;
+            bool crescatoare = false;
+            Console.WriteLine();
+            for ( i = 1; i <= n; i++)
+            {    
                 int a = int.Parse(Console.ReadLine());
-
+                if (i == 1) b = a;
+                if (b <a) crescatoare = true;
                 if (b > a)
                 {
 
                     descrescatoare = true;
+                    bitonica = true;
                     max = b;
                 }
                 if (descrescatoare)
                 {
                     if (a > max || b < a)
                     {
-                        descrescatoare = false;
                         bitonica = false;
+                        break;
                     }
-
                 }
                 b = a;
-
             }
-            if (bitonica) Console.WriteLine("Seria este bitonica");
-            else Console.WriteLine("Seria nu este bitonica");
+            if (i < n) Console.WriteLine("Seria nu poate fi bitonica");
+            else
+            {
+                if (bitonica && crescatoare) Console.WriteLine("Seria este bitonica");
+                else Console.WriteLine("Seria nu este bitonica");
+            }
         }
         /// <summary>
         /// O <secventa bitonica rotita> este o secventa bitonica sau una ca poate fi transformata intr-o secventa bitonica prin rotiri succesive 
@@ -499,7 +528,7 @@ namespace FP_Setul_2
                 {
                     if (a > max || b < a)
                     {
-                        if (contor < a) bitonicarotita = true;
+                        if (contor >=a) bitonicarotita = true;
                         else
                         {
                             descrescatoare = false;
@@ -508,6 +537,7 @@ namespace FP_Setul_2
                     }
 
                 }
+
                 b = a;
             }
             if (bitonicarotita) Console.WriteLine("Seria este bitonica rotita");
